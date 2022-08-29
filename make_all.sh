@@ -10,4 +10,5 @@ make -C chall/reverse/c_basic_strcmp "$@"
 make -C chall/reverse/c_multiple_ifs "$@"
 
 make -C chall/crypto/java_bad_rng "$@"
+make -C chall/crypto/java_bad_hash "$@"
 
