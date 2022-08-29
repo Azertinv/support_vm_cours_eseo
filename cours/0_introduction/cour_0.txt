@@ -1,0 +1,26 @@
+Bienvenue au module Cybersécurité
+Je m'appelle Lucas Arrivé je travaille dans la cybersécurité depuis maintenant 5 ans
+Dans ce cours vous allez être amener à apprendre les bases de la cybersécurité du point de vue du développeur, cette à dire comment sécuriser les logiciels auquel vous allez contribuer.
+MAIS pour ça il faut comprendre le point de vue d'un attaquant et savoir comment un attaquant est capable d'analyser votre programme, trouver ses failles et les exploiter.
+
+Venn diagram between bugs, features and vulnerabilities
+
+Faille de design
+	Fichier LNK utiliser par stuxnet
+	Log4j
+	Hashmap avec une mauvaise fonction de hash
+	Sécurité par l'obscurité
+	Mauvaise utilisation des technique cryptographique
+
+Bug de sécurité
+	La forme de ces bugs depend du language utilisé
+	par exemple il est possible d'avoir des bugs de type integer over/underflow en C, Java mais pas en python
+	ou alors des array out of bound en C et C++ mais pas en Java
+
+Bug hors de votre controle
+	Bug dans une librairie que vous utilisez
+		par exemple Log4j qui a récemment été victime d'une injection de code arbitraire
+	Bug dans l'OS que vous utilisez
+		EternalBlue pour Windows
+	Bug dans le CPU que vous utilisez
+		La vulnérabilité meltdown dans les CPU Intel
