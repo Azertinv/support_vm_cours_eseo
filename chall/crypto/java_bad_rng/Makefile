@@ -1,4 +1,4 @@
-TARGET := Main.java
+TARGET := Main.class
 JAVAC := javac
 SRCS := $(shell find . -name *.java)
 
