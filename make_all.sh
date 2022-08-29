@@ -1,5 +1,6 @@
 #!/bin/bash
 
+make -C chall/exploit/c_vulnerable_function "$@"
 make -C chall/exploit/c_ret_into_system "$@"
 make -C chall/exploit/c_ret_into_shellcode "$@"
 make -C chall/exploit/java_int_overflow "$@"
