@@ -3,3 +3,4 @@ vm/
 *.o
 *.d
 *.out
+*.class
