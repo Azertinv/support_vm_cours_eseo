@@ -1,10 +1,9 @@
-TARGET := Main.class
 JAVAC := javac
-SRCS := $(shell find . -name *.java)
+SRCS := $(shell find ./src/ -name *.java)
 
 target: $(SRCS)
-	$(JAVAC) $(SRCS)
+	$(JAVAC) -d . $(SRCS)
 
 .PHONY: clean
 clean:
-	$(RM) $(TARGET)
+	$(RM) ./*.class
