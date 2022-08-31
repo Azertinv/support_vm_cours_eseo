@@ -1,11 +1,12 @@
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.math.BigInteger;
 import java.security.*;
 import java.util.*;
+import java.time.Instant;
 
 
 class Session {
-    static Random _rand = new Random();
+    static Random _rand = new Random(Instant.now().getEpochSecond());
 
     public String _session_id;
     public boolean _is_admin;
@@ -36,11 +37,9 @@ class SessionManager {
 
     // Returns the session associated with the given session_id
     public Session find_session(String session_id) {
-        for (Session session : _sessions) {
-            if (session._session_id.equals(session_id)) {
+        for (Session session : _sessions)
+            if (session._session_id.startsWith(session_id))
                 return (session);
-            }
-        }
         return null;
     }
 
@@ -48,7 +47,18 @@ class SessionManager {
     public Session prompt_for_session() {
         System.out.print("$ session_id > ");
         String session_id = _scan.nextLine();
-        return (find_session(session_id));
+        // If no session id is given always return null
+        if (session_id.length() == 0)
+            return null;
+        else
+            return find_session(session_id);
+    }
+
+    // Create a session and give the session id to the user
+    public void create_session(boolean is_admin) {
+        Session session = new Session(is_admin);
+        System.out.println("Your session id: " + session._session_id);
+        _sessions.addElement(session);
     }
 
     // Main prompt loop
@@ -60,9 +70,7 @@ class SessionManager {
             switch (cmd) {
                 // Don't ask for a password as guest, just generate a session
                 case "login_guest":
-                    session = new Session(false);
-                    System.out.println("Your session id: " + session._session_id);
-                    _sessions.addElement(session);
+                    create_session(false);
                     break;
                 // Check the password given, if the password is good create an admin session
                 case "login_admin":
@@ -72,13 +80,10 @@ class SessionManager {
                         MessageDigest md = MessageDigest.getInstance("SHA-256");
                         BigInteger no = new BigInteger(1, md.digest(password.getBytes("ASCII")));
                         String hashtext = no.toString(16);
-                        if (hashtext.equals(_admin_password_hash)) {
-                            session = new Session(true);
-                            System.out.println("Your session id: " + session._session_id);
-                            _sessions.addElement(session);
-                        } else {
+                        if (hashtext.equals(_admin_password_hash))
+                            create_session(true);
+                        else
                             System.out.println("bad password");
-                        }
                     } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
                         throw new RuntimeException(e);
                     }
@@ -86,25 +91,41 @@ class SessionManager {
                 // Check if a session has admin powers
                 case "is_admin":
                     session = prompt_for_session();
-                    if (session == null) {
+                    if (session == null)
                         System.out.println("session not found");
-                    } else if (session._is_admin) {
+                    else if (session._is_admin)
                         System.out.println("admin");
-                    } else {
+                    else
                         System.out.println("NOT admin");
+                    break;
+                // List files in a directory
+                case "list":
+                    session = prompt_for_session();
+                    if (session == null)
+                        System.out.println("session not found");
+                    else {
+                        System.out.print("$ path > ");
+                        String path = _scan.nextLine();
+                        ProcessBuilder pb = new ProcessBuilder("ls", "-l", path);
+                        pb.inheritIO();
+                        try {
+                            pb.start().waitFor();
+                        } catch (IOException | InterruptedException e) {}
                     }
                     break;
                 // If admin, launch a shell
                 case "admin_shell":
                     session = prompt_for_session();
-                    if (session == null) {
+                    if (session == null)
                         System.out.println("session not found");
-                    }
                     else if (session._is_admin) {
-                        // TODO spawn shell
-                    } else {
-                        System.out.println("NOT admin, you do not have thie permission");
-                    }
+                        ProcessBuilder pb = new ProcessBuilder("/bin/bash");
+                        pb.inheritIO();
+                        try {
+                            pb.start().waitFor();
+                        } catch (IOException | InterruptedException e) {}
+                    } else
+                        System.out.println("NOT admin, you do not have this permission");
                     break;
                 case "quit":
                     return;
@@ -112,6 +133,7 @@ class SessionManager {
                     System.out.println("    login_guest");
                     System.out.println("    login_admin");
                     System.out.println("    is_admin");
+                    System.out.println("    list");
                     System.out.println("    admin_shell");
                     System.out.println("    quit");
                     System.out.println("    help");
