@@ -4,4 +4,5 @@ vm/
 *.d
 *.out
 *.class
+solution*
 core
